@@ -590,6 +590,7 @@
     linux: { platform: "linux", title: "download", description: "linux", compatibility: "linux", note: "linux", actions: ["download"] },
     ios: { platform: "ios", title: "vpn", description: "mobile", compatibility: "ios", note: "appStore", actions: ["appStore"] },
     android: { platform: "android", title: "vpn", description: "mobile", compatibility: "android", note: "googlePlay", actions: ["apk", "googleFree"] },
+    "windows-phone": { platform: "windowsPhone", fallbackPlatform: "Windows Phone", title: "vpn", description: "setup", compatibility: "windowsPhone", note: "legacy", actions: ["manual"] },
     chrome: { platform: "chrome", title: "vpn", description: "extension", compatibility: "chrome", note: "extension", actions: ["chromeStore"] },
     firefox: { platform: "firefox", title: "vpn", description: "extension", compatibility: "firefox", note: "extension", actions: ["firefoxAddon"] },
     opera: { platform: "opera", title: "vpn", description: "extension", compatibility: "opera", note: "extension", actions: ["operaAddon"] },
@@ -597,6 +598,23 @@
     "apple-tv": { platform: "appleTv", title: "vpn", description: "setup", compatibility: "appleTv", note: "streaming", actions: ["manual"] },
     "amazon-fire-tv": { platform: "amazonFireTv", title: "vpn", description: "setup", compatibility: "amazonFireTv", note: "streaming", actions: ["manual"] },
     "telegram-bot": { platform: "telegramBot", title: "telegram", description: "bot", compatibility: "telegram", note: "telegram", actions: ["telegram"] },
+  };
+
+  const navigation = {
+    ua: { groups: ["Комп'ютер/ноутбук", "Мобільні", "Браузери", "Онлайн TV", "Ручне налаштування", "Telegram-бот"], items: { macos: "macOS", windows: "Windows", linux: "Linux", ios: "iOS", android: "Android", "windows-phone": "Windows Phone", chrome: "Chrome", firefox: "Firefox", opera: "Opera", edge: "Edge", "apple-tv": "Apple TV", "amazon-fire-tv": "Amazon Fire", Roku: "Roku", "Google Chromecast": "Google Chromecast", Kodi: "Kodi", Routers: "Роутери", NAS: "NAS", "telegram-bot": "VPN Unlimited Bot" } },
+    ru: { groups: ["Компьютер/ноутбук", "Мобильные", "Браузеры", "Онлайн TV", "Ручная настройка", "Telegram-бот"], items: { Routers: "Роутеры", "windows-phone": "Windows Phone" } },
+    es: { groups: ["Escritorio/portátil", "Móvil", "Navegadores", "TV online", "Configuración manual", "Bot de Telegram"], items: { Routers: "Routers", "windows-phone": "Windows Phone" } },
+    fr: { groups: ["Ordinateur", "Mobile", "Navigateurs", "TV en ligne", "Configuration manuelle", "Bot Telegram"], items: { Routers: "Routeurs", "windows-phone": "Windows Phone" } },
+    de: { groups: ["Desktop/Laptop", "Mobil", "Browser", "Online-TV", "Manuelle Konfiguration", "Telegram-Bot"], items: { Routers: "Router", "windows-phone": "Windows Phone" } },
+    pt: { groups: ["Desktop/notebook", "Mobile", "Navegadores", "TV online", "Configuração manual", "Bot do Telegram"], items: { Routers: "Roteadores", "windows-phone": "Windows Phone" } },
+    fa: { groups: ["دسکتاپ/لپ‌تاپ", "موبایل", "مرورگرها", "TV آنلاین", "پیکربندی دستی", "ربات تلگرام"], items: { Routers: "روترها", "windows-phone": "Windows Phone" } },
+    ar: { groups: ["سطح المكتب/الكمبيوتر المحمول", "الجوال", "المتصفحات", "TV عبر الإنترنت", "إعداد يدوي", "بوت Telegram"], items: { Routers: "أجهزة التوجيه", "windows-phone": "Windows Phone" } },
+    jp: { groups: ["デスクトップ/ノートPC", "モバイル", "ブラウザ", "オンラインTV", "手動設定", "Telegramボット"], items: { Routers: "ルーター", "windows-phone": "Windows Phone" } },
+    zh: { groups: ["桌面/笔记本", "移动端", "浏览器", "在线 TV", "手动配置", "Telegram 机器人"], items: { Routers: "路由器", "windows-phone": "Windows Phone" } },
+    sv: { groups: ["Dator/laptop", "Mobil", "Webbläsare", "Online-TV", "Manuell konfiguration", "Telegram-bot"], items: { Routers: "Routrar", "windows-phone": "Windows Phone" } },
+    fi: { groups: ["Työpöytä/kannettava", "Mobiili", "Selaimet", "Online-TV", "Manuaalinen määritys", "Telegram-botti"], items: { Routers: "Reitittimet", "windows-phone": "Windows Phone" } },
+    no: { groups: ["Desktop/laptop", "Mobil", "Nettlesere", "Online-TV", "Manuell konfigurasjon", "Telegram-bot"], items: { Routers: "Rutere", "windows-phone": "Windows Phone" } },
+    ko: { groups: ["데스크톱/노트북", "모바일", "브라우저", "온라인 TV", "수동 구성", "Telegram 봇"], items: { Routers: "라우터", "windows-phone": "Windows Phone" } },
   };
 
   const generatedCopy = {
@@ -859,7 +877,7 @@
   }
 
   function genericOverlay(profile, copy) {
-    const platform = copy.platforms[profile.platform];
+    const platform = copy.platforms[profile.platform] || profile.fallbackPlatform || profile.platform;
     const title = profile.title === "download"
       ? fillTemplate(copy.downloadTitle, platform)
       : profile.title === "telegram"
@@ -871,8 +889,8 @@
       seoTitle: title,
       description: fillTemplate(copy[`${profile.description}Description`], platform),
       imageAlt: title,
-      compatibility: copy.compatibility[profile.compatibility],
-      note: copy.notes[profile.note],
+      compatibility: copy.compatibility[profile.compatibility] || profile.fallbackPlatform || platform,
+      note: copy.notes[profile.note] || copy.notes.streaming || "",
       benefits: copy.benefits,
       primaryLinks: profile.actions.map((action) => ({ label: copy.actions[action] })),
       sections: [
@@ -892,5 +910,5 @@
     }
   }
 
-  root.DOWNLOADS_TRANSLATIONS = { labels, otherPlatforms, pages };
+  root.DOWNLOADS_TRANSLATIONS = { labels, otherPlatforms, navigation, pages };
 })(typeof window !== "undefined" ? window : globalThis);

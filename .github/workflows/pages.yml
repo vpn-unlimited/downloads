@@ -37,7 +37,7 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           mkdir -p public
-          cp -R assets downloads ar de es fa fi fr jp ko no pt ru sv ua zh public/
+          cp -R assets amazon-fire-tv android apple-tv chrome edge firefox ios linux macos opera telegram-bot windows windows-phone ar de es fa fi fr jp ko no pt ru sv ua zh public/
           cp index.html .nojekyll public/
 
       - name: Upload artifact

@@ -62,15 +62,9 @@ for (const locale of data.locales) {
   }
 }
 
-fs.writeFileSync(
-  path.join(rootDir, "index.html"),
-  '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=downloads/"><link rel="canonical" href="downloads/">',
-  "utf8",
-);
-
 function pathSegments(localeCode, slug) {
   const prefix = localeCode === data.defaultLocale ? [] : [localeCode];
-  return [...prefix, "downloads", ...(slug ? [slug] : [])];
+  return [...prefix, ...(slug ? [slug] : [])];
 }
 
 function depthFor(localeCode, slug) {
@@ -220,6 +214,7 @@ function localizedLabels(localeCode) {
 }
 
 function localizedNavigation(localeCode) {
+  const overlay = translations.navigation?.[localeCode] || {};
   const groupTitleKeys = [
     "header.navigation.submenu.titleDeskLap",
     "header.navigation.submenu.titleMobile",
@@ -234,7 +229,7 @@ function localizedNavigation(localeCode) {
     ["linux", "header.navigation.submenu.deskLapListLinux"],
     ["ios", "header.navigation.submenu.mobileListIos"],
     ["android", "header.navigation.submenu.mobileListAndroid"],
-    ["Windows Phone", "header.navigation.submenu.mobileListWindowsPhone"],
+    ["windows-phone", "header.navigation.submenu.mobileListWindowsPhone"],
     ["chrome", "header.navigation.submenu.browsersListChrome"],
     ["firefox", "header.navigation.submenu.browsersListFirefox"],
     ["opera", "header.navigation.submenu.browsersListOpera"],
@@ -251,12 +246,12 @@ function localizedNavigation(localeCode) {
 
   return data.navigation.map((group, index) => ({
     ...group,
-    title: translate(localeCode, groupTitleKeys[index], group.title),
+    title: overlay.groups?.[index] || translate(localeCode, groupTitleKeys[index], group.title),
     items: group.items.map((item) => {
       const key = item.slug || item.label;
       return {
         ...item,
-        label: translate(localeCode, itemKeys.get(key), item.label),
+        label: overlay.items?.[key] || translate(localeCode, itemKeys.get(key), item.label),
       };
     }),
   }));
@@ -327,7 +322,7 @@ function renderDetailPage(locale, slug, labels, page, root) {
             </div>
             <h2 class="downloads-benefits__title">${escapeHtml(labels.benefits)}</h2>
             <ul class="downloads-benefits">${benefits}</ul>
-            ${renderManuals(page, labels, locale.code)}
+            ${slug === "windows" ? "" : renderManuals(page, labels, locale.code)}
           </div>
           <div class="downloads-hero__media">
             <img src="${escapeAttr(assetPath(page.image, root))}" alt="${escapeAttr(page.imageAlt)}">
@@ -513,7 +508,7 @@ function renderFaq(page, labels) {
 function localPath(localeCode, slug, root) {
   const prefix = localeCode === data.defaultLocale ? "" : `${localeCode}/`;
   const suffix = slug ? `${slug}/` : "";
-  return `${root}${prefix}downloads/${suffix}`;
+  return `${root}${prefix}${suffix || ""}`;
 }
 
 function assetPath(fileName, root) {

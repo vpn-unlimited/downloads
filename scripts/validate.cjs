@@ -130,7 +130,7 @@ function countMatches(value, regex) {
 
 function pathSegments(localeCode, slug) {
   const prefix = localeCode === data.defaultLocale ? [] : [localeCode];
-  return [...prefix, "downloads", ...(slug ? [slug] : [])];
+  return [...prefix, ...(slug ? [slug] : [])];
 }
 
 function walk(dir) {

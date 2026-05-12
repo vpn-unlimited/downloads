@@ -46,7 +46,7 @@ const server = http.createServer((request, response) => {
 });
 
 server.listen(port, host, () => {
-  const previewPath = `${basePath || ""}/downloads/windows/`.replace(/\/{2,}/g, "/");
+  const previewPath = `${basePath || ""}/windows/`.replace(/\/{2,}/g, "/");
   console.log(`Downloads static server: http://${host}:${port}${previewPath}`);
 });
 

@@ -38,7 +38,7 @@
   function localPath(localeCode, targetSlug) {
     const prefix = localeCode === data.defaultLocale ? "" : `${localeCode}/`;
     const suffix = targetSlug ? `${targetSlug}/` : "";
-    return relativeToRoot(`${prefix}downloads/${suffix}`);
+    return relativeToRoot(`${prefix}${suffix}`);
   }
 
   function externalPath(localeCode, href) {
@@ -107,21 +107,25 @@
   }
 
   function renderNav(currentLocale, currentSlug) {
-    const groups = data.navigation.map((group) => {
+    const navOverlay = translations.navigation?.[currentLocale] || {};
+    const groups = data.navigation.map((group, groupIndex) => {
       const isActiveGroup = group.items.some((item) => item.slug === currentSlug);
+      const groupTitle = navOverlay.groups?.[groupIndex] || group.title;
       const items = group.items.map((item) => {
         const isExternal = Boolean(item.externalPath);
         const href = isExternal ? externalPath(currentLocale, item.externalPath) : localPath(currentLocale, item.slug);
         const active = item.slug === currentSlug ? " is-active" : "";
         const attrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
         const icon = item.icon ? `<span class="downloads-nav__icon downloads-nav__icon--${escapeAttr(item.icon)}"></span>` : "";
-        return `<a class="downloads-nav__item${active}" href="${escapeAttr(href)}"${attrs}>${icon}<span>${escapeHtml(item.label)}</span></a>`;
+        const key = item.slug || item.label;
+        const label = navOverlay.items?.[key] || item.label;
+        return `<a class="downloads-nav__item${active}" href="${escapeAttr(href)}"${attrs}>${icon}<span>${escapeHtml(label)}</span></a>`;
       }).join("");
 
       return `
         <div class="downloads-nav__group${isActiveGroup ? " is-active" : ""}">
           <button class="downloads-nav__button" type="button" aria-expanded="false">
-            <span>${escapeHtml(group.title)}</span>
+            <span>${escapeHtml(groupTitle)}</span>
             <span class="downloads-nav__chevron" aria-hidden="true"></span>
           </button>
           <div class="downloads-nav__menu">${items}</div>
@@ -205,7 +209,7 @@
               </div>
               <h2 class="downloads-benefits__title">${escapeHtml(text.benefits)}</h2>
               <ul class="downloads-benefits">${benefits}</ul>
-              ${renderManuals(page, text, localeCode)}
+              ${slug === "windows" ? "" : renderManuals(page, text, localeCode)}
             </div>
             <div class="downloads-hero__media">
               <img src="${escapeAttr(assetPath(page.image))}" alt="${escapeAttr(page.imageAlt)}">

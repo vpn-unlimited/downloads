@@ -28,7 +28,7 @@ BASE_PATH=/repo-name node scripts/serve.cjs
 Then open:
 
 ```text
-http://127.0.0.1:4177/repo-name/downloads/windows/
+http://127.0.0.1:4177/repo-name/windows/
 ```
 
 `scripts/validate.cjs` verifies local links/assets and the full generated page matrix. It checks that every expected locale/page HTML file exists, that generated pages have the expected `lang`, `dir`, `data-locale`, `data-slug`, and that each page has all locale `hreflang` alternates.
@@ -52,14 +52,14 @@ git push -u origin main
 In GitHub, open `Settings -> Pages` and set `Build and deployment -> Source` to `GitHub Actions`.
 The workflow runs on `main` and `master`, so push to one of those branches or update `.github/workflows/pages.yml`.
 
-The Pages artifact contains only the generated site files: `index.html`, `.nojekyll`, `assets/`, `downloads/`, and locale-prefixed directories.
+The Pages artifact contains only the generated site files: `index.html`, `.nojekyll`, `assets/`, platform directories, and locale-prefixed directories.
 
 ## Scope
 
 - No global header.
 - Downloads navigation panel is the first visible block.
 - English paths are unprefixed.
-- Non-English paths use a locale prefix, for example `ua/downloads/windows/`.
+- Non-English paths use a locale prefix, for example `ua/windows/`.
 - All 15 locale trees are generated and linked with `hreflang` alternates in each page head.
 - The page includes a compact language selector below the downloads navigation; it changes to the equivalent localized static page without adding the global site header.
 - External manual/help links point to `www.vpnunlimited.com`.
@@ -89,4 +89,4 @@ The Windows page is the baseline for visual parity. Additional representative sc
 
 The current standalone stylesheet ports the required downloads-specific visual rules from the Nuxt downloads components instead of importing the full Nuxt style stack. The ported baseline covers the platform navigation, compact language selector, hero/store badge, manuals rows, Windows why-use content block, setup steps, and feature cards.
 
-Latest full HTTP smoke checked all 196 generated `index.html` URLs under `/repo-name/` with 0 failures.
+Latest structural validation checked all 211 generated `index.html` files with 0 failures.
